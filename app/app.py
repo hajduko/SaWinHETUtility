@@ -243,9 +243,11 @@ async def convert(
         # Not fatal for the download; just log it
         print(f"Failed to delete original JSON from S3 ({json_key}): {e}")
 
+    lead_code = json_key.split("-")[0]
+
     # Return as downloadable file
     return StreamingResponse(
         io.BytesIO(output_bytes),
         media_type="application/json",
-        headers={"Content-Disposition": 'attachment; filename="converted.json"'},
+        headers={"Content-Disposition": f'attachment; filename="{lead_code}.json"'},
     )
