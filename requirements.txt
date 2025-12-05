@@ -1,0 +1,8 @@
+msal
+dotenv
+fastapi
+uvicorn[standard]
+jinja2
+itsdangerous
+python-multipart
+boto3

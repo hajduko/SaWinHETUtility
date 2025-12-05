@@ -1,0 +1,108 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block content %}
+
+<div class="card">
+  <div class="card-body">
+    <h2 class="mb-4">Convert JSON</h2>
+    <form id="convert-form" class="m-0" method="post" action="/convert" enctype="multipart/form-data">
+      <div class="d-flex flex-column gap-3">
+        <!-- JSON from S3 -->
+        <div>
+          <label class="form-label" for="json_key">JSON file from S3:</label>
+          <select id="json_key" class="form-select" name="json_key" required>
+            <option value="" disabled selected>Select a JSON file</option>
+            {% for f in json_files %}
+            <option value="{{ f.key }}">{{ f.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label class="form-label" for="pdf">PDF file:</label>
+          <input id="pdf" class="form-control" type="file" name="pdf" accept=".pdf" required />
+        </div>
+
+        <!-- Images + categories -->
+        <div>
+          <label class="form-label">Images:</label>
+          <div id="images-container" class="d-flex flex-column gap-2 mb-2">
+            <!-- one initial row -->
+            <div class="image-row d-flex gap-2 align-items-center">
+              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
+              <select class="form-select" name="categories" required>
+                <option value="" disabled selected>Select category</option>
+                <option value="coverPhoto">Borítókép</option>
+                <option value="facade">Homlokzat</option>
+                <option value="characteristicHeatExchanger">Jellemző hőleadó és annak szabályozása</option>
+                <option value="characteristicOpeningStructure">Jellemző nyílászáró</option>
+                <option value="heatGeneratorAndHeatStorageSituation">Hőtermelő és a hőtároló helyzete</option>
+                <option value="renewableEnergyUtilizerSystem">Megújuló energiát hasznosító rendszer</option>
+                <option value="other">Egyéb</option>
+              </select>
+              <input class="form-control" name="notes" required />
+              <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">&times;</button>
+            </div>
+          </div>
+          <button type="button" id="add-image-btn" class="btn btn-outline-secondary btn-sm mt-2">+ Add image</button>
+          <small class="text-muted d-block mt-1">
+            Min: 1× coverPhoto, 1× characteristicHeatExchanger, 1× characteristicOpeningStructure.
+          </small>
+        </div>
+
+        <button class="btn btn-primary text-nowrap w-100" type="submit">Convert JSON</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const container = document.getElementById('images-container');
+    const addBtn = document.getElementById('add-image-btn');
+
+    function createImageRow() {
+      const row = document.createElement('div');
+      row.className = 'image-row d-flex gap-2 align-items-center';
+
+      row.innerHTML = `
+        <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
+        <select class="form-select" name="categories" required>
+          <option value="" disabled selected>Select category</option>
+          <option value="coverPhoto">Borítókép</option>
+          <option value="facade">Homlokzat</option>
+          <option value="characteristicHeatExchanger">Jellemző hőleadó és annak szabályozása</option>
+          <option value="characteristicOpeningStructure">Jellemző nyílászáró</option>
+          <option value="heatGeneratorAndHeatStorageSituation">Hőtermelő és a hőtároló helyzete</option>
+          <option value="renewableEnergyUtilizerSystem">Megújuló energiát hasznosító rendszer</option>
+          <option value="other">Egyéb</option>
+        </select>
+        <input class="form-control" name="notes" required />
+        <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">
+          &times;
+        </button>
+      `;
+
+      // hook up remove button
+      row.querySelector('.remove-image-btn').addEventListener('click', function () {
+        container.removeChild(row);
+      });
+
+      return row;
+    }
+
+    // Add new image row
+    addBtn.addEventListener('click', function () {
+      container.appendChild(createImageRow());
+    });
+
+    // Wire up remove button for the initial row
+    container.querySelectorAll('.image-row .remove-image-btn').forEach((btn) => {
+      btn.addEventListener('click', function () {
+        const row = btn.closest('.image-row');
+        if (row && container.children.length > 1) {
+          container.removeChild(row);
+        }
+      });
+    });
+  })();
+</script>
+
+{% endblock %}
