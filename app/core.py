@@ -1,4 +1,3 @@
-import json
 import re
 from collections import OrderedDict
 from typing import Any, Dict, List
@@ -26,7 +25,16 @@ def split_entries(entries):
 
 # Normalize value
 
-def normalize_value(raw: str) -> Any:
+def normalize_value(raw: Any) -> Any:
+    # If it's already a proper JSON type, don't touch it
+    if isinstance(raw, (bool, int, float)) or raw is None:
+        return raw
+
+    # If it's not a string (e.g., list, dict), just return as is
+    if not isinstance(raw, str):
+        return raw
+
+    # Now we know it's a string
     if raw == "TRUE":
         return True
     if raw == "FALSE":
