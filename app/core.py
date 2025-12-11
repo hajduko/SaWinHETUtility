@@ -366,13 +366,13 @@ def transform_json(
 
     result = process_other(other)
 
-    if (boundary_processed.count > 0):
+    if (len(boundary_processed) > 0):
         result["boundaryAndOpeningStructures"] = boundary_processed
     
-    if (mpd_processed.count > 0):
+    if (len(mpd_processed) > 0):
         result["modernisationProposalDetails"] = mpd_processed
 
-    if (mps_processed.count > 0):
+    if (len(mps_processed) > 0):
         result["modernisationProposalsOfBuildingServicesSystems"] = mps_processed
 
     # Force some numeric-ish address fields to strings
