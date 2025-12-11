@@ -189,8 +189,8 @@ async def convert(
     notes: list[str] = Form(...),
 ):
     # Basic consistency checks
-    if len(images) != len(categories) and len(images) != len(notes):
-        raise HTTPException(status_code=400, detail="Number of images and categories must match.")
+    if len(images) != len(categories) or len(images) != len(notes):
+        raise HTTPException(status_code=400, detail="Number of images, categories and notes must match.")
 
     # Enforce required categories at least once
     present_cats = set(categories)
