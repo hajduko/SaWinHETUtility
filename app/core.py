@@ -2,6 +2,7 @@ import re
 from collections import OrderedDict
 from typing import Any, Dict, List
 import base64
+from datetime import datetime
 
 # Split entries to 4 arrays based on types
 
@@ -200,7 +201,7 @@ def process_mps(entries):
         if current_actual is not None:
             q = current_actual.get("quality")
             n = current_actual.get("note")
-            if q is None and n is None:
+            if q == "":
                 current_system["actualEnergeticQuality"] = None
             else:
                 current_system["actualEnergeticQuality"] = current_actual
@@ -307,6 +308,10 @@ def process_other(entries):
             # Skip generic processing for these keys
             continue
 
+        # Skip empty values entirely
+        if value in ("", None):
+            continue
+
         keys = flat_key.split("__")
 
         current = result
@@ -361,13 +366,21 @@ def transform_json(
 
     result = process_other(other)
 
-    result["boundaryAndOpeningStructures"] = boundary_processed
-    result["modernisationProposalDetails"] = mpd_processed
-    result["modernisationProposalsOfBuildingServicesSystems"] = mps_processed
+    if (boundary_processed.count > 0):
+        result["boundaryAndOpeningStructures"] = boundary_processed
+    
+    if (mpd_processed.count > 0):
+        result["modernisationProposalDetails"] = mpd_processed
+
+    if (mps_processed.count > 0):
+        result["modernisationProposalsOfBuildingServicesSystems"] = mps_processed
 
     # Force some numeric-ish address fields to strings
     result["buildingData"]["buildingAddress"]["houseNumber"] = str(
         result["buildingData"]["buildingAddress"]["houseNumber"]
+    )
+    result["buildingData"]["buildingAddress"]["building"] = str(
+        result["buildingData"]["buildingAddress"]["building"]
     )
     result["buildingData"]["buildingAddress"]["floor"] = str(
         result["buildingData"]["buildingAddress"]["floor"]
@@ -375,9 +388,18 @@ def transform_json(
     result["buildingData"]["buildingAddress"]["doorNumber"] = str(
         result["buildingData"]["buildingAddress"]["doorNumber"]
     )
+    result["buildingData"]["buildingAddress"]["staircase"] = str(
+        result["buildingData"]["buildingAddress"]["staircase"]
+    )
+    result["buildingData"]["topographicalNumber"] = str(
+        result["buildingData"]["topographicalNumber"]
+    )
 
     result["certifierDetails"]["address"]["houseNumber"] = str(
         result["certifierDetails"]["address"]["houseNumber"]
+    )
+    result["certifierDetails"]["address"]["building"] = str(
+        result["certifierDetails"]["address"]["building"]
     )
     result["certifierDetails"]["address"]["floor"] = str(
         result["certifierDetails"]["address"]["floor"]
@@ -385,6 +407,17 @@ def transform_json(
     result["certifierDetails"]["address"]["doorNumber"] = str(
         result["certifierDetails"]["address"]["doorNumber"]
     )
+    result["certifierDetails"]["address"]["staircase"] = str(
+        result["certifierDetails"]["address"]["staircase"]
+    )
+    result["certifierDetails"]["topographicalNumber"] = str(
+        result["certifierDetails"]["topographicalNumber"]
+    )
+    result["certifierDetails"]["phoneNumber"] = "+" + str(
+        result["certifierDetails"]["phoneNumber"]
+    )
+
+    result["validity"]["siteInspectionDate"] = datetime.strptime(result["validity"]["siteInspectionDate"], "%m/%d/%y").strftime("%y.%m.%d.")
 
     # --- PDF -> base64 ---
     pdf_b64 = base64.b64encode(pdf_bytes).decode("ascii")
