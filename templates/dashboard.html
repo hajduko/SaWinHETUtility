@@ -24,69 +24,16 @@
         <div>
           <label class="form-label">Images:</label>
           <div id="images-container" class="d-flex flex-column gap-2 mb-2">
+            {% for i in image_default %}
             <div class="image-row d-flex gap-2 align-items-center">
               <select class="form-select" name="categories" required readonly>
-                <option value="coverPhoto" selected>Borítókép</option>
+                <option value="{{ i.value }}" selected>{{ i.text }}</option>
               </select>
               <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Kép az ingatlanról" />
+              <input class="form-control" name="notes" required value="{{ i.note }}" />
+              <button type="button" class="btn btn-outline-danger btn-sm remove-image-btn">&times;</button>
             </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="facade" selected>Homlokzat</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Bejárati homlokzat" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="characteristicHeatExchanger" selected>Jellemző hőleadó és annak szabályozása</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Jellemző hőleadó" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="characteristicHeatExchanger" selected>Jellemző hőleadó és annak szabályozása</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Termosztát" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="characteristicOpeningStructure" selected>Jellemző nyílászáró</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Jellemző ablak" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="characteristicOpeningStructure" selected>Jellemző nyílászáró</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Bejárati ajtó" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="characteristicOpeningStructure" selected>Jellemző nyílászáró</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Terasz ajtó" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="heatGeneratorAndHeatStorageSituation" selected>Hőtermelő és a hőtároló helyzete</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Kazán" />
-            </div>
-            <div class="image-row d-flex gap-2 align-items-center">
-              <select class="form-select" name="categories" required readonly>
-                <option value="heatGeneratorAndHeatStorageSituation" selected>Hőtermelő és a hőtároló helyzete</option>
-              </select>
-              <input class="form-control" type="file" name="images" accept=".jpg,.jpeg,.png" required />
-              <input class="form-control" name="notes" required value="Bojler" />
-            </div>
+            {% endfor %}
           </div>
           <button type="button" id="add-image-btn" class="btn btn-outline-secondary btn-sm mt-2">+ Add image</button>
         </div>
@@ -135,6 +82,16 @@
     // Add new image row
     addBtn.addEventListener('click', function () {
       container.appendChild(createImageRow());
+    });
+
+    // Wire up remove button for the initial row
+    container.querySelectorAll('.image-row .remove-image-btn').forEach((btn) => {
+      btn.addEventListener('click', function () {
+        const row = btn.closest('.image-row');
+        if (row && container.children.length > 1) {
+          container.removeChild(row);
+        }
+      });
     });
   })();
 </script>

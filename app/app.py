@@ -164,12 +164,33 @@ async def dashboard(request: Request, user=Depends(get_current_user)):
                     }
                 )
 
+    image_default = []
+
+    def append_image(value: str, text: str, note: str):
+        image_default.append({
+            "value": value,
+            "text": text,
+            "note": note
+        })
+        return
+    
+    append_image("coverPhoto", "Borítókép", "Kép az ingatlanról")
+    append_image("facade", "Homlokzat", "Bejárati homlokzat")
+    append_image("characteristicHeatExchanger", "Jellemző hőleadó és annak szabályozása", "Jellemző hőleadó")
+    append_image("characteristicHeatExchanger", "Jellemző hőleadó és annak szabályozása", "Termosztát")
+    append_image("characteristicOpeningStructure", "Jellemző nyílászáró", "Jellemző ablak")
+    append_image("characteristicOpeningStructure", "Jellemző nyílászáró", "Bejárati ajtó")
+    append_image("characteristicOpeningStructure", "Jellemző nyílászáró", "Terasz ajtó")
+    append_image("heatGeneratorAndHeatStorageSituation", "Hőtermelő és a hőtároló helyzete", "Kazán")
+    append_image("heatGeneratorAndHeatStorageSituation", "Hőtermelő és a hőtároló helyzete", "Bojler")
+
     return templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
             "user": user,
             "json_files": json_files,
+            "image_default": image_default
         },
     )
 
