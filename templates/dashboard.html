@@ -137,18 +137,6 @@
       container.appendChild(createImageRow());
     });
   })();
-
-  const form = document.getElementById('convert-form');
-  if (form) {
-    form.addEventListener('submit', function () {
-      const f = this;
-      // Let the browser collect form data first, then reset.
-      setTimeout(() => {
-        f.reset();
-        window.location.reload(); // clears inputs, selects, textareas, file inputs
-      }, 500); // 0–500 ms is fine; just after submit starts
-    });
-  }
 </script>
 
 {% endblock %}
