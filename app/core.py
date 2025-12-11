@@ -417,7 +417,7 @@ def transform_json(
         result["certifierDetails"]["phoneNumber"]
     )
 
-    result["validity"]["siteInspectionDate"] = datetime.strptime(result["validity"]["siteInspectionDate"], "%m/%d/%y").strftime("%y.%m.%d.")
+    result["validity"]["siteInspectionDate"] = datetime.strptime(result["validity"]["siteInspectionDate"], "%m/%d/%Y").strftime("%Y.%m.%d.")
 
     # --- PDF -> base64 ---
     pdf_b64 = base64.b64encode(pdf_bytes).decode("ascii")
